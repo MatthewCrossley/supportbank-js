@@ -1,4 +1,4 @@
-import { readCSV } from "./csv.js"
+import { readTransactionFile } from "./io.js"
 import { createAccount, accounts, lookupAccount } from "./accounts.js"
 import { newTransaction } from "./transactions.js"
 import log4js from "log4js"
@@ -15,7 +15,7 @@ log4js.configure({
 const logger = log4js.getLogger("index.js")
 
 function loadFromFile(file){
-    let data = readCSV(file)
+    let data = readTransactionFile(file)
 
     for (var entry of data){
         let date = entry[0]
@@ -34,7 +34,7 @@ function loadFromFile(file){
 }
 
 function main(){
-    const files = ["Transactions2014.csv", "DodgyTransactions2015.csv"]
+    const files = ["Transactions2013.json", "Transactions2014.csv", "DodgyTransactions2015.csv"]
     for (let file of files){
         loadFromFile(`transactions/${file}`)
     }

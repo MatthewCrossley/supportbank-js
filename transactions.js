@@ -14,7 +14,7 @@ class InvalidTransaction extends Error {
 
 class Transaction {
     constructor(date, from, to, amount, reference) {
-        this.date = date
+        this.date = new Date(date)
         if (typeof(from) === String){
             this.from = lookupAccount(from)
         } else {
@@ -33,7 +33,9 @@ class Transaction {
 
     validate(){
         let err_message = ""
-        if (! this.from instanceof Account){
+        if (! this.date instanceof Date || this.date.toLocaleString() === "Invalid Date"){
+            err_message += "invalid date"
+        } else if (! this.from instanceof Account){
             err_message += "invalid sender account"
         } else if (! this.to instanceof Account){
             err_message += "invalid recipient account"
@@ -52,7 +54,7 @@ class Transaction {
     }
 
     toString(){
-        return `${this.date} || ${this.amount} = ${this.from.name} -> ${this.to.name}: ${this.reference}`
+        return `${this.date.toString()} :: £${this.amount} = ${this.from.name} => ${this.to.name}: ${this.reference}`
     }
 }
 
@@ -60,6 +62,7 @@ export function newTransaction(date, from, to, amount, reference){
     let trans = new Transaction(date, from, to, amount, reference)
     trans.apply()
     transactionHistory.push(trans)
+    transactionHistory.sort((a, b) => {return a.date > b.date})
     logger.debug(`new transaction: ${trans.toString()}`)
     return trans
 }

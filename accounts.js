@@ -29,14 +29,7 @@ export class Account {
             return base
         }
         for (let trans of this.getHistory()){
-            let str = "\n\t"
-            if (trans.from === this){
-                str += `Sent £${trans.amount} to ${trans.to.name}`
-            } else {
-                str += `Received £${trans.amount} from ${trans.from.name}`
-            }
-            str += ` on ${trans.date}, reference: ${trans.reference}`
-            base += str
+            base += "\n\t" + trans.toString()
         }
         return base
     }
