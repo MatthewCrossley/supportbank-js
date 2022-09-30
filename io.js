@@ -1,5 +1,6 @@
 import fs from "fs"
 import log4js from "log4js"
+import { xml2json } from "xml-js"
 
 const logger = log4js.getLogger('io.js')
 
@@ -39,12 +40,35 @@ function readJson(file){
     return data
 }
 
+function readXML(file){
+    const contents = readFile(file)
+    let json = JSON.parse(xml2json(contents, {compact: true}))
+    let data = []
+
+    for (let element of json["TransactionList"]["SupportTransaction"]){
+        let date = new Date((element["_attributes"]["Date"] - (25567 + 2))*86400*1000)
+        data.push([
+            date,
+            element["Parties"]["From"]["_text"],
+            element["Parties"]["To"]["_text"],
+            element["Value"]["_text"],
+            element["Description"]["_text"]
+        ])
+
+    }
+
+    return data
+}
+
 export function readTransactionFile(file){
     if (file.endsWith(".csv")){
         return readCSV(file)
     }
     if (file.endsWith(".json")){
         return readJson(file)
+    }
+    if (file.endsWith(".xml")){
+        return readXML(file)
     }
 }
 
