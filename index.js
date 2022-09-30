@@ -2,6 +2,7 @@ import { readTransactionFile } from "./io.js"
 import { createAccount, accounts, lookupAccount } from "./accounts.js"
 import { newTransaction } from "./transactions.js"
 import log4js from "log4js"
+import fs from "fs"
 
 log4js.configure({
     appenders: {
@@ -34,9 +35,8 @@ function loadFromFile(file){
 }
 
 function main(){
-    const files = ["Transactions2013.json", "Transactions2014.csv", "DodgyTransactions2015.csv"]
-    for (let file of files){
-        loadFromFile(`transactions/${file}`)
+    for (let file of fs.readdirSync("transactions")){
+        loadFromFile("transactions/" + file)
     }
 
     let args = process.argv.splice(2)
