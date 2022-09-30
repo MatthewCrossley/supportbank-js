@@ -1,4 +1,7 @@
 import { lookupAccount } from "./accounts.js"
+import log4js from "log4js"
+
+const logger = log4js.getLogger("transactions.js")
 
 export const transactionHistory = []
 
@@ -23,11 +26,16 @@ class Transaction {
         this.from.balance = +((this.from.balance - this.amount).toFixed(2))
         this.to.balance = +((this.to.balance + this.amount).toFixed(2))
     }
+
+    toString(){
+        return `${this.date} || ${this.amount} = ${this.from.name} -> ${this.to.name}: ${this.reference}`
+    }
 }
 
 export function newTransaction(date, from, to, amount, reference){
     let trans = new Transaction(date, from, to, amount, reference)
     trans.apply()
     transactionHistory.push(trans)
+    logger.debug(`create and apply new transaction: ${trans.toString()}`)
     return trans
 }

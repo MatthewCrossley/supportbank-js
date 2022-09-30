@@ -1,6 +1,17 @@
 import { readCSV } from "./csv.js"
 import { createAccount, accounts, lookupAccount } from "./accounts.js"
 import { newTransaction } from "./transactions.js"
+import log4js from "log4js"
+
+log4js.configure({
+    appenders: {
+        file: { type: 'fileSync', filename: 'logs/debug.log' }
+    },
+    categories: {
+        default: { appenders: ['file'], level: 'debug'}
+    }
+});
+
 
 function loadFromFile(file){
     let data = readCSV(file)

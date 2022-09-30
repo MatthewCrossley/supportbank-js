@@ -1,4 +1,7 @@
 import { transactionHistory } from "./transactions.js"
+import log4js from "log4js"
+
+const logger = log4js.getLogger('accounts.js')
 
 export var accounts = {}
 
@@ -32,7 +35,7 @@ class Account {
             } else {
                 str += `Received £${trans.amount} from ${trans.from.name}`
             }
-            str += `, reference: ${trans.reference}`
+            str += ` on ${trans.date}, reference: ${trans.reference}`
             base += str
         }
         return base
@@ -41,18 +44,22 @@ class Account {
 
 export function lookupAccount(name){
     if (! (name in accounts)){
+        logger.debug(`account of name "${name}" not found in accounts`)
         return false
     }
+    logger.debug(`lookup account of name "${name}" successful`)
     return accounts[name]
 }
 
 export function createAccount(name){
     if (lookupAccount(name) !== false){
+        logger.debug(`account name "${name}" already exists`)
         return lookupAccount(name)
     }
 
     let acc = new Account(name)
     accounts[name] = acc
+    logger.debug(`created account under name "${name}"`)
     return acc
 }
 
