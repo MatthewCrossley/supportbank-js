@@ -5,7 +5,7 @@ const logger = log4js.getLogger('accounts.js')
 
 export var accounts = {}
 
-class Account {
+export class Account {
     constructor(name) {
         this.name = name
         this.balance = 0.0

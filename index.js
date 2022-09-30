@@ -12,6 +12,7 @@ log4js.configure({
     }
 });
 
+const logger = log4js.getLogger("index.js")
 
 function loadFromFile(file){
     let data = readCSV(file)
@@ -23,12 +24,20 @@ function loadFromFile(file){
         let reference = entry[3]
         let amount = entry[4]
 
-        newTransaction(date, from, to, amount, reference)
+        try {
+            newTransaction(date, from, to, amount, reference)
+        } catch (err) {
+            logger.error("error thrown when applying transaction")
+            logger.error(err)
+        }
     }
 }
 
 function main(){
-    loadFromFile("Transactions2014.csv")
+    const files = ["Transactions2014.csv", "DodgyTransactions2015.csv"]
+    for (let file of files){
+        loadFromFile(`transactions/${file}`)
+    }
 
     let args = process.argv.splice(2)
 

@@ -1,9 +1,16 @@
-import { lookupAccount } from "./accounts.js"
+import { Account, lookupAccount } from "./accounts.js"
 import log4js from "log4js"
 
 const logger = log4js.getLogger("transactions.js")
 
 export const transactionHistory = []
+
+class InvalidTransaction extends Error {
+    constructor(message) {
+        super(message);
+        this.message = message;
+    }
+}
 
 class Transaction {
     constructor(date, from, to, amount, reference) {
@@ -20,6 +27,23 @@ class Transaction {
         }
         this.amount = parseFloat(amount)
         this.reference = reference
+
+        this.validate()
+    }
+
+    validate(){
+        let err_message = ""
+        if (! this.from instanceof Account){
+            err_message += "invalid sender account"
+        } else if (! this.to instanceof Account){
+            err_message += "invalid recipient account"
+        } else if (isNaN(this.amount)){
+            err_message += `invalid transaction amount - "${this.amount}" is NaN`
+        }
+
+        if (err_message !== ""){
+            throw new InvalidTransaction(err_message)
+        }
     }
 
     apply(){
@@ -36,6 +60,6 @@ export function newTransaction(date, from, to, amount, reference){
     let trans = new Transaction(date, from, to, amount, reference)
     trans.apply()
     transactionHistory.push(trans)
-    logger.debug(`create and apply new transaction: ${trans.toString()}`)
+    logger.debug(`new transaction: ${trans.toString()}`)
     return trans
 }
