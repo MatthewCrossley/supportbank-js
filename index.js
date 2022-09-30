@@ -1,6 +1,6 @@
 import { readTransactionFile } from "./io.js"
 import { createAccount, accounts, lookupAccount } from "./accounts.js"
-import { newTransaction } from "./transactions.js"
+import { applyTransactions, newTransaction } from "./transactions.js"
 import log4js from "log4js"
 import fs from "fs"
 
@@ -28,10 +28,12 @@ function loadFromFile(file){
         try {
             newTransaction(date, from, to, amount, reference)
         } catch (err) {
-            logger.error("error thrown when applying transaction")
+            logger.error("error thrown when creating transaction")
             logger.error(err)
         }
     }
+
+    applyTransactions()
 }
 
 function main(){

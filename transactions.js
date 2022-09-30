@@ -3,6 +3,7 @@ import log4js from "log4js"
 
 const logger = log4js.getLogger("transactions.js")
 
+export const pendingTransactions = []
 export const transactionHistory = []
 
 class InvalidTransaction extends Error {
@@ -60,9 +61,16 @@ class Transaction {
 
 export function newTransaction(date, from, to, amount, reference){
     let trans = new Transaction(date, from, to, amount, reference)
-    trans.apply()
-    transactionHistory.push(trans)
-    transactionHistory.sort((a, b) => {return a.date > b.date})
+    pendingTransactions.push(trans)
     logger.debug(`new transaction: ${trans.toString()}`)
     return trans
+}
+
+export function applyTransactions(){
+    pendingTransactions.sort((a, b) => {return a.date < b.date})
+    while (pendingTransactions.length > 0){
+        let trans = pendingTransactions.pop()
+        trans.apply()
+        transactionHistory.push(trans)
+    }
 }
