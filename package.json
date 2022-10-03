@@ -1,6 +1,7 @@
 {
     "type": "module",
     "dependencies": {
-        "log4js": "^6.6.1"
+        "log4js": "^6.6.1",
+        "xml-js": "^1.6.11"
     }
 }
